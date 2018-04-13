@@ -48,13 +48,11 @@ Then use `cv2.getPerspectiveTransform` function to compute the transform matrix,
   <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/birdeye/color_grad_birdeye-test5.jpg' width='400' title='birdeye'>
 </div>
 
-### Find lanes
-
-<img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/test_images/test3.jpg' width=350 hspace=5>
-<div>
-  <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/bianry.jpg' width=350, hspace=10>
-  <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/histogram.jpg' width=350>
-</div>
+### Find lanes>
+<p align='middle'>
+  <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/bianry.jpg' width=200 />
+  <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/histogram.jpg' width=200 />
+</p>
 
 <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/sliding_window.jpg' width=800>
 <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/sliding_window2.jpg' width=600>
