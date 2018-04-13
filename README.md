@@ -75,7 +75,7 @@ Finally, we will plot all the pixels found within the sliding window region to f
 
 The radius of curvature of curve at a particular point is defined as the radius of the approximating circle. This radius changes as we move along the lane. The formula for the radius of curvature at a given point is explained [here](https://www.intmath.com/applications-differentiation/8-radius-curvature.php), and the function `curvature` is implemented in [sliding_window.py] for calculating the radius of curvature.
 
-The vehicle position with respect to road center is calculated as followed. First, calculate the center position of the end points from each lane by doing `(left_fitx[-1]+right_fitx[-1])/2`, then calculate the center of the road image by doing `img_width/2`, lastly, subtract the two values to get the value of deviation from center. 
+The vehicle position with respect to road center is calculated as followed. First, calculate the road center position by getting the mid point of the ends points from each lane such as`(left_fitx[-1]+right_fitx[-1])/2`, then calculate the center of the road image, which is the position of the vehicle, by doing `img_width/2`, lastly, subtract the two values to get the value of deviation from center. 
 
 
 ### video
