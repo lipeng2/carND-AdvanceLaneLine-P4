@@ -31,11 +31,32 @@ Then using `cv2.calibrateCamera` and the stored objpoints and imgpoints to compu
 
 ### Apply color/gradient threshold to create binary images
 
-After many empirical trials, we dicoveried that RGB, HSV, and HLS threholding works the best to eliminate noises and detect lane lines accuracly. 
+After many empirical trials, using a combination of RGB, HSV, and HLS threholds works the best to eliminate noises and detect lane lines accuracly. Below is an example. 
 <div>
   <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/undistortion/undistorted-test1.jpg' width='400' title='undistorted' hspace='20'>
   <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/color_thresh/color_thresh-test1.jpg' width='400' title='binary'>
 </div>
+
+### Perspective transform
+
+After obtaining the binary image of road, we can perform a perspective transform to get a birdeye view of the road lanes. The code is implemented in [perspective_transform.py](https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/perspective_transform.py). Use function `get_corners`,implemented in [utils.py](https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/utils.py), define source points consists of four corners in the original image, and destination points consists of four corners in the new transformed image as below. 
+<img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/birdeye/poly_region.jpg' width=800>
+
+Then use `cv2.getPerspectiveTransform` function to compute the transform matrix, and supply it to `cv2.warpPerspective` function to get the birdeye view of the road image.
+<div>
+  <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/color_grad/color_grad-test5.jpg' width='400' title='binary' hspace='20'>
+  <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/birdeye/color_grad_birdeye-test5.jpg' width='400' title='birdeye'>
+</div>
+
+### Find lanes
+<div>
+  <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/test_images/test3.jpg' width=400 hspace=20>
+  <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/histogram.jpg' width=600>
+</div>
+<img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/sliding_window.jpg' width=800>
+
+<img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/sliding_window2.jpg' width=600>
+
 
 ### video
 You can watch the output video for this project [here](https://www.youtube.com/watch?v=bFBkiqR_XWU&feature=youtu.be)
