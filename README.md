@@ -50,8 +50,8 @@ Then use `cv2.getPerspectiveTransform` function to compute the transform matrix,
 
 ### Find lanes>
 <p align='middle'>
-  <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/bianry.jpg' width=200 />
-  <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/histogram.jpg' width=200 />
+  <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/bianry.jpg' width=400 />
+  <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/histogram.jpg' width=400 />
 </p>
 
 <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/sliding_window.jpg' width=800>
