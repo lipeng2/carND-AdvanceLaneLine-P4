@@ -1,5 +1,5 @@
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
 # carND-AdvanceLaneLine-P4
+The project is designed to robustly detect highway lanes under various pavement and lighting conditions. The solution is devised using a number of image processing algorithms that work on the frames of a video stream of the oncoming road sections taken by a camera mounted on the front windshield of the vehicle. 
 
 ## Overview
 
@@ -80,3 +80,8 @@ The vehicle position with respect to road center is calculated as followed. Firs
 
 ### Video
 You can watch the output video for this project [here](https://www.youtube.com/watch?v=1x1KWZSZQ0I&feature=youtu.be)
+
+### Discussion
+* The biggest problem encountered when implementing the pipeline is getting the correct lanes detected while eliminating all other noises to improve the performance of the algorithm. Gradient thresholding performs quite well at detecting edges, however, it does not eliminate edges created by shadows, therefore, I don't recommend to use any of gradient thresholding. On the other hand, color channel thresholding works suprisingly well at this task. A combination of RGB, HSV, and HLS thresholding is deployed to address the problem. I use RGB threholding for detecting yellow and white lanes, HSV for saturation thresholding, and HLS thresholding to address different lighting conditions.
+* The pipeline can certainly be improved by using dynamic color thresholding and dynamic region perspective transformation to enhance its robustness. Additionally, more advanced statistical models can be deployed in finding lane pixels and fitting lanes instead of polynomial method.
+* This pipeline is designed primarily to detect highway lanes, and I think it will fail to detect hill road lanes which have significantly shorter straight lanes and more drastic turning lanes.
