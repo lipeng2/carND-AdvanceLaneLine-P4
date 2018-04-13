@@ -1,3 +1,4 @@
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
 # carND-AdvanceLaneLine-P4
 
 ## Overview
@@ -48,14 +49,33 @@ Then use `cv2.getPerspectiveTransform` function to compute the transform matrix,
   <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/birdeye/color_grad_birdeye-test5.jpg' width='400' title='birdeye'>
 </div>
 
-### Find lanes>
-<p align='middle'>
+### Detect lanes
+After applying calibration, thresholding, and a perspective transform to a road image, the result is a binary image where the lane lines stand out clearly as shown below. First we take a histogram along all the columns in the lower half of the image like this:
+```
+hist = np.sum(binary_img[height//2:,:], axis=0)
+plt.plot(hist)
+```
+
+<div align='middle'>
   <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/bianry.jpg' width=400 />
   <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/histogram.jpg' width=400 />
-</p>
+</div>
 
-<img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/sliding_window.jpg' width=800>
+and the positions of the two most prominent peaks in the histogram correspond to the x-coordinates of the base for two lanes. These two positions can serve as starting points for where to search for the lines. From that point, a sliding window can be placed around the line center to find and follow the lines up to the top of the frame
+
+<div>
+  <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/sliding_window.jpg' width=800>
+</div>
+
+Finally, we will plot all the pixels found within the sliding window region to fit a second degree polynomial using `np.polynomial` function. Example result shown below.
+
 <img src='https://github.com/lipeng2/carND-AdvanceLaneLine-P4/blob/master/output_images/sliding_window2.jpg' width=600>
+
+### radius of curvature and vehicle position with respect to road center
+
+The radius of curvature of curve at a particular point is defined as the radius of the approximating circle. This radius changes as we move along the lane. The formula for the radius of curvature at a given point is explained [here](https://www.intmath.com/applications-differentiation/8-radius-curvature.php), and the function `curvature` is implemented in [sliding_window.py] for calculating the radius of curvature.
+
+The vehicle position with respect to road center is calculated as followed. First, calculate the center position of the end points from each lane by doing `(left_fitx[-1]+right_fitx[-1])/2`, then calculate the center of the road image by doing `img_width/2`, lastly, subtract the two values to get the value of deviation from center. 
 
 
 ### video
