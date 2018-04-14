@@ -3,6 +3,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def get_base_pos(binary_warped):
+    '''
+    Input:
+    binary_warped -- a binary birdeye image
+
+    Return:
+    leftx_base -- x-coordinate of left lane at the bottom of the image
+    rightx_base -- x-coordinate of right lane at the bottom of the image
+    '''
     # get image size
     height = binary_warped.shape[0]
     width = binary_warped.shape[1]
@@ -31,10 +39,24 @@ def good_inds(y, x, y_low, y_high, x_low, x_high):
     return ((y>=y_low)&(y<y_high)&(x>=x_low)&(x<x_high)).nonzero()[0]
 
 def curvature(y, x, ym_per_pix, xm_per_pix):
+    '''
+    Input:
+    y -- y-coordinates
+    x -- x-coordinates
+    ym_per_pix -- coversion from pixel to meter in y direction
+    xm_per_pix -- coversion from pixel to meter in x direction
+
+    Return:
+    radius of given curvature in meters
+    '''
     fit_cr = np.polyfit(y*ym_per_pix, x*xm_per_pix, 2)
     return ((1+(2*fit_cr[0]*y[-1]*ym_per_pix + fit_cr[1])**2)**1.5) / np.absolute(2*fit_cr[0])
 
+# helper function
 def get_region(left_fitx, right_fitx, margin, ploty):
+    '''
+    get region pixels of given lanes and center of roads
+    '''
     left_line_window1 = np.array([np.transpose(np.vstack([left_fitx-margin, ploty]))])
     left_line_window2 = np.array([np.flipud(np.transpose(np.vstack([left_fitx+margin, ploty])))])
     left_line_pts = np.hstack((left_line_window1, left_line_window2))
@@ -47,14 +69,42 @@ def get_region(left_fitx, right_fitx, margin, ploty):
 
     return left_line_pts, right_line_pts, inner_line_pts
 
-def fill_region(img, left_line_pts, right_line_pts, inner_line_pts):
+# helper function
+def fill_region(img, left_line_pts, right_line_pts, inner_line_pts, dir='straight'):
+    '''
+    fill colors in given regions
+    '''
     window_img = np.zeros_like(img)
     cv2.fillPoly(window_img, np.int_([left_line_pts]), (0,255, 0))
     cv2.fillPoly(window_img, np.int_([right_line_pts]), (0,255, 0))
-    cv2.fillPoly(window_img, np.int_([inner_line_pts]), (255,255,0))
+    if dir == 'straight':
+        cv2.fillPoly(window_img, np.int_([inner_line_pts]), (255,255,0))
+    if dir == 'right':
+        cv2.fillPoly(window_img, np.int_([inner_line_pts]), (120,0,0))
+    if dir == 'left':
+        cv2.fillPoly(window_img, np.int_([inner_line_pts]), (0,0,120))
     return window_img
 
+# helper function
+def get_direction(left_cur, right_cur, diff):
+    '''
+    get direction of the vehicle is heading
+    '''
+    if left_cur > 1200 and right_cur > 1200:
+        direction = 'straight'
+    elif diff > 210:
+        direction = 'right'
+    elif diff < -180:
+        direction = 'left'
+    else:
+        direction = 'straight'
+    return direction
+
+# helper function
 def skip_slide_window(binary_warped, left_fit, right_fit, margin=100):
+    '''
+    get all lane pixels given lanes detected from the previous frame
+    '''
     nonzero = binary_warped.nonzero()
     nonzeroy = np.array(nonzero[0])
     nonzerox = np.array(nonzero[1])
@@ -69,7 +119,7 @@ def skip_slide_window(binary_warped, left_fit, right_fit, margin=100):
 
     return left_lane_inds, right_lane_inds
 
-def find_curves(binary_warped, nwindows=9, margin=100, minpix=50, detected=False, prev_left_fit=None, prev_right_fit=None):
+def find_curves(binary_warped, nwindows=9, margin=100, minpix=50, detected=False, prev_left_fit=None, prev_right_fit=None, curve_diff=0):
     # get image size
     height = binary_warped.shape[0]
     width = binary_warped.shape[1]
@@ -145,10 +195,14 @@ def find_curves(binary_warped, nwindows=9, margin=100, minpix=50, detected=False
 
     left_cur = curvature(ploty, left_fitx, 30/720, 3.7/700)
     right_cur = curvature(ploty, right_fitx, 30/720, 3.7/700)
+    direction = get_direction(left_cur, right_cur, curve_diff)
+    camera_center = (left_fitx[-1] + right_fitx[-1])/2
+    center_diff = (camera_center-width/2)*3.7/700
 
     # draw region
     left_line_pts, right_line_pts, inner_line_pts = get_region(left_fitx, right_fitx, margin, ploty)
-    window_img = fill_region(out_img, left_line_pts, right_line_pts, inner_line_pts)
+    window_img = fill_region(out_img, left_line_pts, right_line_pts, inner_line_pts, direction)
 
     result = cv2.addWeighted(out_img, 1, window_img, 0.5, 0)
-    return result, out_img, left_fit, right_fit, detected, left_cur, right_cur
+
+    return result, out_img, left_fit, right_fit, detected, left_cur, right_cur, center_diff
